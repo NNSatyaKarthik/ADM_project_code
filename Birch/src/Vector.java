@@ -76,6 +76,14 @@ public class Vector {
         return temp;
     }
 
+    public double squaredVal() {
+        double res = 0; 
+        for(int i = 0 ; i < this.len; i++){
+            res += this.x[i] * this.x[i];
+        }
+        return res;
+    }
+
     public Vector sub(Vector c) {
         Vector res = new Vector(this.x);
         res.subFromThis(c);
@@ -114,5 +122,12 @@ public class Vector {
         }
         return res;
     }
-    
+
+    public double absVal() {
+        double res = 0 ;
+        for(int i = 0 ; i < this.len; i++){
+            res += ((this.x[i] >0 )?this.x[i]:-this.x[i]);
+        }
+        return res;
+    }
 }

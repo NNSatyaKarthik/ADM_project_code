@@ -17,6 +17,32 @@ public class DataPoints {
         }
     }
 
+    public DataPoints(List<Vector> points, Vector ls, Vector ss) {
+        if(this.points == null || this.getLS() == null || this.getSS() == null){
+            this.points = new ArrayList<>();
+            this.points.addAll(points);
+            this.LS = ls;
+            this.SS = ss;
+        }else{
+            this.points.addAll(points);
+            this.LS.addToThis(ls);
+            this.SS.addToThis(ss);
+        }
+    }
+
+    public void add(List<Vector> points, Vector ls, Vector ss) {
+        if(this.points == null || this.getLS() == null || this.getSS() == null){
+            this.points = new ArrayList<>();
+            this.points.addAll(points);
+            this.LS = ls;
+            this.SS = ss;
+        }else{
+            this.points.addAll(points);
+            this.LS.addToThis(ls);
+            this.SS.addToThis(ss);
+        }
+    }
+    
     public void add(Vector point){
         if(point != null){
             points.add(point);
@@ -43,5 +69,9 @@ public class DataPoints {
     @Override
     public String toString() {
         return String.format("(%d, %s, %s)", this.getN(), this.getLS(), this.getSS());
+    }
+
+    public boolean isEmpty() {
+        return this.points.isEmpty();
     }
 }
