@@ -1,4 +1,3 @@
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +20,21 @@ public class Distances {
 
     public static Vector getCentroid(DataPoints points){
         // centroid = sum(vectors)/len(vectors)
-        Vector res = points.getLS();
-        res = res.div(points.getN());
-        return res;
+        return getCentroid(points.getN(), points.getLS());
     }
-    
+
+    public static Vector getCentroid(int n, Vector ls) {
+        // centroid = sum(vectors)/len(vectors)
+        return ls.div(n);
+    }
+
     public static double getRadius(DataPoints points){
-        Vector c = Distances.getCentroid(points);
-        return Math.sqrt((points.getSS().val() + (points.getN()*c.squaredVal())- (2*c.mul(points.getLS())))/points.getN());
+        return getRadius(points.getN(), points.getLS(), points.getSS());
+    }
+
+    public static double getRadius(int n, Vector ls, Vector ss){
+        Vector c = getCentroid(n, ls);
+        return Math.sqrt((ss.val() + (n*c.squaredVal())- (2*c.mul(ls)))/n);
     }
 
     public static double getRadius(List<Vector> points){
@@ -40,10 +46,13 @@ public class Distances {
         return Math.sqrt((numerator)/points.size());
     }
 
+    public static double getDiameter(int n, Vector ls, Vector ss){
+        Vector c = Distances.getCentroid(n, ls);
+        return Math.sqrt((2* n * ss.val() - (2*ls.mul(ls)))/(n*(n-1)));
+    }
+
     public static double getDiameter(DataPoints points){
-        Vector c = Distances.getCentroid(points);
-        int n  = points.getN();
-        return Math.sqrt((2* n * points.getSS().val() - (2*points.getLS().mul(points.getLS())))/(n*(n-1)));
+        return getDiameter(points.getN(), points.getLS(), points.getSS());
     }
 
     public static double getDiameter(List<Vector> points){
@@ -71,10 +80,16 @@ public class Distances {
     }
 
     // avg inter cluster distance measure
+    public static double getD2(int n1, Vector ls1, Vector ss1,int n2, Vector ls2, Vector ss2){
+        if(ls1!= null && ls2!= null && ss1 != null && ss2 != null){
+            return Math.sqrt((n2*ss1.val() + n1*ss2.val() - 2*ls1.mul(ls2))/(n1*n2));
+        }else throw new NullPointerException("x or y clusters is comming as null.. ");
+    }
+    
+    // avg inter cluster distance measure
     public static double getD2(DataPoints x, DataPoints y){
         if(x!= null && y != null && !x.isEmpty() && !y.isEmpty()){
-            int n1 = x.getN(), n2 = y.getN();
-            return Math.sqrt((n2*x.getSS().val() + n1*y.getSS().val() - 2*x.getLS().mul(y.getLS()))/(n1*n2));
+            return getD2(x.getN(), x.getLS(), x.getSS(), y.getN(), y.getLS(), y.getSS());
         }else throw new NullPointerException("x or y clusters is comming as null.. ");
     }
 
@@ -92,13 +107,17 @@ public class Distances {
         }else throw new NullPointerException("x or y clusters points is comming as null.. ");
     }
 
-
+    // avg intra cluster distance measure
+    public static double getD3(int n1, Vector ls1, Vector ss1,int n2, Vector ls2, Vector ss2){
+        if(ls1!= null && ls2!= null && ss1 != null && ss2 != null){
+            return Distances.getDiameter(n1+n2, ls1.add(ls2), ss1.add(ss2));
+        }else throw new NullPointerException("x or y clusters is comming as null.. ");
+    }
+    
     // avg intra cluster distance measure
     public static double getD3(DataPoints x, DataPoints y){
         if(x!= null && y != null && !x.isEmpty() && !y.isEmpty()){
-            DataPoints obj = new DataPoints(x.points, x.getLS(), x.getSS());
-            obj.add(y.points, y.getLS(), y.getSS());
-            return Distances.getDiameter(obj);
+            return getD3(x.getN(), x.getLS(), x.getSS(), y.getN(), y.getLS(), y.getSS());
         }else throw new NullPointerException("x or y clusters is comming as null.. ");
     }
 

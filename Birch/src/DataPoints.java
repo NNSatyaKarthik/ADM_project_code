@@ -1,3 +1,4 @@
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,10 @@ public class DataPoints {
     private Vector LS;
     private Vector SS;
 
+    public DataPoints(){
+        this.points = new ArrayList<>();
+    }
+    
     public DataPoints(ArrayList<Vector> points) {
         this.points = new ArrayList<>();
         for(Vector point : points){
@@ -30,7 +35,7 @@ public class DataPoints {
         }
     }
 
-    public void add(List<Vector> points, Vector ls, Vector ss) {
+    public void add(List<Vector> points, Vector ls, Vector ss) {    
         if(this.points == null || this.getLS() == null || this.getSS() == null){
             this.points = new ArrayList<>();
             this.points.addAll(points);
@@ -42,10 +47,9 @@ public class DataPoints {
             this.SS.addToThis(ss);
         }
     }
-    
-    public void add(Vector point){
+    public void add(int index, Vector point){
         if(point != null){
-            points.add(point);
+            points.add(index, point);
             if(this.LS != null) this.LS.addToThis(point);
             else this.LS = new Vector(point.x);
             
@@ -53,6 +57,15 @@ public class DataPoints {
             else this.SS = (new Vector(point.x)).square();
         }
     }
+    
+    public void add(Vector point){
+        this.add(this.points.size(), point);
+    }
+    
+    public Vector get(int index){
+        return (index < this.points.size())?this.points.get(index):null;
+    }
+    
     public int getN() {
         return points.size();
     }
@@ -74,4 +87,6 @@ public class DataPoints {
     public boolean isEmpty() {
         return this.points.isEmpty();
     }
+    
+    public int size(){ return this.points.size();}
 }
