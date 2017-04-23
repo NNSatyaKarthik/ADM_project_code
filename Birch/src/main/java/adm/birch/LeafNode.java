@@ -1,22 +1,21 @@
+package adm.birch;
+import adm.birch.CFEntry;
+import adm.birch.CFNode;
+import adm.birch.Distances;
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by nagasaty on 4/20/17.
  */
 public class LeafNode extends Node<Vector>{
+    final static Logger logger = Logger.getLogger(LeafNode.class);
     List<Vector> points = null;
     private Vector LS;
     private Vector SS;
-    CFNode parentPtr;
-
-    public CFNode getParentPtr() {
-        return parentPtr;
-    }
-
-    public void setParentPtr(CFNode parentPtr) {
-        this.parentPtr = parentPtr;
-    }
     
     public LeafNode(int capacity, Node parentPtr, boolean isLeaf) {
         super(capacity, parentPtr, isLeaf);
@@ -28,7 +27,7 @@ public class LeafNode extends Node<Vector>{
         this.points = new ArrayList<>(capacity+1);
         for(Vector point : points){
             this.add(point);
-//            System.out.println(point + "--" + this.LS + "--"+ this.SS);
+//            logger.info(point + "--" + this.LS + "--"+ this.SS);
         }
     }
 
@@ -93,7 +92,7 @@ public class LeafNode extends Node<Vector>{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("(");
+        sb.append("L(");
         for (int i = 0; i < points.size(); i++) {
             Vector node = points.get(i);
             sb.append(node.toString());
@@ -112,7 +111,11 @@ public class LeafNode extends Node<Vector>{
     @Override
     public boolean insert(Vector dataPoint) {
         if(this.points.size() < getCapacity()){
+            int n = this.getN();
+            Vector ls = this.getLS();
+            Vector ss = this.getSS();
             add(dataPoint);
+            if(ls!= null && ss!=null) setDelta(new CFEntry(this.getN()-n, this.getLS().sub(ls), this.getSS().sub(ss)));
             return true;
         }
         return false;
@@ -125,7 +128,7 @@ public class LeafNode extends Node<Vector>{
         double maxSofar = -1, dist;
         int maxSofarI = -1, maxSofarJ = -1;
         
-        this.points.add(dataPoint);
+        this.add(dataPoint);
         int n = this.points.size();
         
         for (int i = 0; i < n; i++) {
@@ -140,7 +143,7 @@ public class LeafNode extends Node<Vector>{
         }
         
         if(maxSofarI == -1 || maxSofarJ == -1){
-            System.err.println("Max sofar is not updated...");
+            logger.error("Max sofar is not updated...");
 //            System.exit(255);
         }
         
@@ -152,15 +155,16 @@ public class LeafNode extends Node<Vector>{
          // iterate again and see which one is nearer.
         LeafNode x = new LeafNode(getCapacity(), null, true);
         LeafNode y = new LeafNode(getCapacity(), null, true);
-        x.add(src);
-        y.add(dest);
+        x.add(src); // added src to x cluster
+        y.add(dest); // added dest to y cluster
         double dx = 0 , dy = 0 ; 
         for(Vector point : points){
-            if(point != null){
+            if(point != null){ // as we are making src and dest null.. (already added above)
                 dx = Distances.getD0(Distances.getCentroid(x.getN(), x.getLS()),point); // distance from centroid to curr vector
                 dy = Distances.getD0(Distances.getCentroid(y.getN(), y.getLS()),point); // distance from centroid to curr vector
-                //TODO min criteria condition is not satisfied here.
-                // TODO threshold constraint is not yet implementeed
+                //TODO min criteria condition (that x cluster should contain L leves minimum inorder to maintain the height of the tree) is not satisfied here.
+                // TODO threshold constraint (that all the vectors in this cluster should be < T.. not taken care of here..For now considers relative lower distance 
+                // TODO this has to be implemented in a cleaner way)is not yet implementeed
                 if(dx < dy){
                     x.add(point);
                 }else{
@@ -168,10 +172,11 @@ public class LeafNode extends Node<Vector>{
                 }
             }
         }
-        // till here we got 2 leafnodes populated with the data 
+        // till here we got 2 leafnodes (new clusters x and y) populated with the data 
         
         // no need to set this.. as the parent pointer is not changed .. here
-        x.setParentPtr(this.getParentPtr());// update x parent pointer to currentnodes parent pointer
+//        x.setParentPtr(this.getParentPtr());// update x parent pointer to currentnodes parent pointer
+        this.setDelta(new CFEntry(x.getN()-this.getN(), x.getLS().sub(this.getLS()), x.getSS().sub(this.getSS())));
         this.points = x.points;// update x values to the current node
         this.LS = x.LS;
         this.SS = x.SS;

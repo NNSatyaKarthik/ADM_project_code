@@ -1,3 +1,5 @@
+package adm.birch;
+
 /**
  * Created by nagasaty on 4/20/17.
  */
@@ -9,7 +11,7 @@ class C extends A{
 
     @Override
     void print() {
-        System.out.println("C from A");
+        System.out.println("adm.birch.C from adm.birch.A");
     }
 }
 
@@ -17,7 +19,7 @@ class B extends A{
 
     @Override
     void print() {
-        System.out.println("B from A");
+        System.out.println("adm.birch.B from adm.birch.A");
     }
 }
 

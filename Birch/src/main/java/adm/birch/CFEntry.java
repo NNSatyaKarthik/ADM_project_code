@@ -1,3 +1,5 @@
+package adm.birch;
+
 /**
  * Created by nagasaty on 4/20/17.
  */
@@ -17,9 +19,11 @@ public class CFEntry {
         return String.format("(%d, %s, %s)", n, LS, SS);
     }
 
-    public void update(int n, Vector ls, Vector ss) {
+    public CFEntry update(int n, Vector ls, Vector ss) {
+        CFEntry delta = new CFEntry(this.n-n, this.LS.sub(ls), this.SS.sub(ss));
         this.n = n;
         this.LS = ls;
         this.SS = ss;
+        return delta;
     }
 }

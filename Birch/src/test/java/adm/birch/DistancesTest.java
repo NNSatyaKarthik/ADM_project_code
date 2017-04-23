@@ -1,3 +1,8 @@
+package adm.birch;
+
+import adm.birch.DataPoints;
+import adm.birch.Distances;
+import adm.birch.Vector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,9 +41,9 @@ public class DistancesTest {
     @org.junit.Test
     public void getCentroid() throws Exception {
         Vector centroid = Distances.getCentroid(points);
-        System.out.println("Centroid Vector: "+centroid);
+        System.out.println("Centroid adm.birch.Vector: "+centroid);
         DataPoints dataPoints = new DataPoints(points); 
-        System.out.println("Centroid Vector: "+Distances.getCentroid(dataPoints));
+        System.out.println("Centroid adm.birch.Vector: "+Distances.getCentroid(dataPoints));
         assertEquals(true, centroid.isEqual(Distances.getCentroid(dataPoints)));
     }
 

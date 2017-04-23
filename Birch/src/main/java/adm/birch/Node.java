@@ -1,5 +1,7 @@
+package adm.birch;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by nagasaty on 4/20/17.
@@ -10,10 +12,12 @@ abstract class Node<T>{
     private boolean isSorted;
     private boolean isInternal;
     private int minElements;
-    private Node parentPtr;
-
-    public Node(int capacity, Node parentPtr,  boolean isLeaf) {
-        this(capacity, (int)Math.ceil(capacity/2), parentPtr);
+    private Node parentNodePtr;
+    CFNode parentPtr;
+    CFEntry delta; 
+    
+    public Node(int capacity, Node parentNodePtr,  boolean isLeaf) {
+        this(capacity, (int)Math.ceil(capacity/2), parentNodePtr);
         if(isLeaf) {
             this.isSorted = false;
             this.isInternal = false;
@@ -22,12 +26,12 @@ abstract class Node<T>{
             this.isInternal = true;
         }
     }
-    
-    private Node(int capacity, int minElements, Node parentPtr){
+
+    private Node(int capacity, int minElements, Node parentNodePtr){
         this.capacity = capacity;
         this.data = new ArrayList<T>();
         this.minElements = minElements;
-        this.parentPtr = parentPtr;
+        this.parentNodePtr = parentNodePtr;
     }
     
     public boolean isFull(){ return this.data.size() == this.capacity;}
@@ -66,4 +70,35 @@ abstract class Node<T>{
     abstract public Vector getLS();
     abstract public Vector getSS();
     abstract public int getN();
+    
+    public Node getParentNodePtr() {
+        return parentNodePtr;
+    }
+
+    public void setParentNodePtr(Node parentNodePtr) {
+        this.parentNodePtr = parentNodePtr;
+    }
+
+    public CFNode getParentPtr() {
+        return parentPtr;
+    }
+
+    public void setParentPtr(CFNode parentPtr) {
+        this.parentPtr = parentPtr;
+    }
+    
+    public void setDelta(CFEntry delta){
+        this.delta = delta;
+    }
+    
+    public CFEntry getDelta(){
+        return this.delta;
+    }
+
+    public void metaSync(CFEntry delta, Stack<InternalNode> path){
+        for(int i = 0 ; i < path.size(); i++){
+            InternalNode node = path.get(i);
+            node.appendDelta(delta);
+        }
+    }
 }

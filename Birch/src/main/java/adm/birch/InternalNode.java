@@ -1,34 +1,29 @@
+package adm.birch;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by nagasaty on 4/20/17.
  */
 public class InternalNode extends Node<CFNode>{
     ArrayList<CFNode> points;
+    private int n;
     private Vector LS;
-    
     private Vector SS;
-    CFNode parentPtr;
-
-    public CFNode getParentPtr() {
-        return parentPtr;
-    }
-
-    public void setParentPtr(CFNode parentPtr) {
-        this.parentPtr = parentPtr;
-    }
-
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("(");
+        sb.append("[");
+        sb.append(String.format("N:%d-LS:%s-SS:%s  :: ", this.getN(), this.getLS(), this.getSS()));
         for (int i = 0; i < points.size(); i++) {
             CFNode node = points.get(i);
             sb.append(node.toString());
             if((i+1) != points.size()) sb.append(", ");
         }
-        sb.append(")");
+        sb.append("]");
         return sb.toString();
     }
 
@@ -39,9 +34,9 @@ public class InternalNode extends Node<CFNode>{
     public int size(){ return this.points.size();}
 
     public int getN() {
-        return this.points.size();
+        return this.n;
     }
-    
+
     public Vector getLS() {
         return LS;
     }
@@ -70,6 +65,7 @@ public class InternalNode extends Node<CFNode>{
 
     public void add(int index, CFNode point){
         if(point != null){
+            this.n += point.childPtr.getN();
             points.add(index, point);
             if(this.LS != null) this.LS.addToThis(point.childPtr.getLS());
             else this.LS = new Vector(point.childPtr.getLS().x);
@@ -90,7 +86,11 @@ public class InternalNode extends Node<CFNode>{
     @Override
     public boolean insert(CFNode dataPoint) {
         if(this.points.size() < getCapacity()){
+            int n = this.getN();
+            Vector ls = this.getLS();
+            Vector ss = this.getSS();
             add(dataPoint);
+            if(ls!= null && ss!=null) setDelta(new CFEntry(this.getN()-n, this.getLS().sub(ls), this.getSS().sub(ss)));
             return true;
         }else 
             return false;
@@ -156,6 +156,7 @@ public class InternalNode extends Node<CFNode>{
 
         // no need to set this.. as the parent pointer is not changed .. here
 //        x.setParentPtr(this.getParentPtr());// update x parent pointer to currentnodes parent pointer
+        this.setDelta(new CFEntry(x.getN()-this.getN(), x.getLS().sub(this.getLS()), x.getSS().sub(this.getSS())));
         this.points = x.points;// update x values to the current node
         this.LS = x.LS;
         this.SS = x.SS;
@@ -166,5 +167,18 @@ public class InternalNode extends Node<CFNode>{
         // return yi
         return cfNode;
     }
-    
+
+    public void appendDelta(CFEntry delta) {
+        if(delta != null){
+            this.n += delta.n;
+            this.getLS().addToThis(delta.LS);
+            this.getSS().addToThis(delta.SS);
+        }
+    }
+
+    public void addVectorInfo(Vector data) {
+        this.n+= 1;
+        this.getLS().addToThis(data);
+        this.getSS().addToThis(data.square());
+    }
 }

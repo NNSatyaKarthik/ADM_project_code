@@ -1,8 +1,9 @@
+package adm.birch;
+
+import adm.birch.Vector;
 import org.junit.*;
 
 import java.util.ArrayList;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by nagasaty on 4/20/17.
@@ -14,7 +15,7 @@ public class BirchTest {
     public void init() {
         points = new ArrayList<Vector>();
         Vector temp;
-        for (int i = 1; i < 11; i++) {
+        for (int i = 1; i < 12; i++) {
             temp = new Vector(1);
             temp.x[0] = i;
             /*if(i %2 == 0){

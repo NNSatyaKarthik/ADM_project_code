@@ -1,3 +1,5 @@
+package adm.birch;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +82,7 @@ public class Distances {
     }
 
     // avg inter cluster distance measure
-    public static double getD2(int n1, Vector ls1, Vector ss1,int n2, Vector ls2, Vector ss2){
+    public static double getD2(int n1, Vector ls1, Vector ss1, int n2, Vector ls2, Vector ss2){
         if(ls1!= null && ls2!= null && ss1 != null && ss2 != null){
             return Math.sqrt((n2*ss1.val() + n1*ss2.val() - 2*ls1.mul(ls2))/(n1*n2));
         }else throw new NullPointerException("x or y clusters is comming as null.. ");
@@ -108,7 +110,7 @@ public class Distances {
     }
 
     // avg intra cluster distance measure
-    public static double getD3(int n1, Vector ls1, Vector ss1,int n2, Vector ls2, Vector ss2){
+    public static double getD3(int n1, Vector ls1, Vector ss1, int n2, Vector ls2, Vector ss2){
         if(ls1!= null && ls2!= null && ss1 != null && ss2 != null){
             return Distances.getDiameter(n1+n2, ls1.add(ls2), ss1.add(ss2));
         }else throw new NullPointerException("x or y clusters is comming as null.. ");

@@ -1,0 +1,29 @@
+Insert : 
+    Into leaf node: 
+        1. space is available to insert a vector in leaf node.
+        // inserts data 
+        // updates the N, LS, SS of LeafNode .. 
+            
+            
+            this returns a delta pointer.. how much of this nodes content has been changed.
+        
+        // what about parent nodes till the root?
+            // update the parentPtr(CFNODE) of the leafNode data :: Returns a delta pointer change in the N, LS, SS
+            // iterate over the stack path -- for getting the parent node (internal node always)
+            // update all the nodes CFNODE pointer & Internal Node poitner (stack path) with this delta pointer
+        // Done
+        
+        2.
+        
+    Into internal node:
+        1. space is available to insert a CFNODe into internal Node: 
+        // inserts data
+        // updates N, LS, SS of Internal Node
+        
+        this returns a delta pointer.. how much of this nodes content has been changed
+        
+        take this delta pointer
+        // update the CFNode of hte parentPtr of this Internal Node
+        // update the parent InternalNodes Information from the stack path with this delta pointer
+        
+        2.

@@ -1,3 +1,6 @@
+package adm.birch;
+import org.apache.log4j.Logger;
+
 import java.util.*;
 
 /**
@@ -6,6 +9,7 @@ import java.util.*;
 //    B is for Branch Node
 //    E is for Element Node
 public class Birch  {
+    final static Logger logger = Logger.getLogger(Birch.class); 
     private int M; 
     private int L;
     private int T;
@@ -33,11 +37,11 @@ public class Birch  {
             if(isInserted){
                 CFNode n = new CFNode(ltemp, new CFEntry(ltemp.getN(), ltemp.getLS(), ltemp.getSS()));
                 isInserted = itemp.insert(n); // inserts data of the leaf node ot hte parent node
-                ltemp.setParentPtr(n);
+                ltemp.setParentPtr(n); // parent ptr of leaf node is set to cfnode in the internal ndoe
                 this.root = itemp; // mark teh root as internal node
             }else{
                 // not inserted.. split required here
-                System.err.println("Split required.. here"+data);
+                logger.error("root is null and split is required.. which desnt' make sense.. recheck the param MLT"+data);
             }
         }else{
 // trickle down the root and then insert .. and then split the node if required
@@ -46,8 +50,10 @@ public class Birch  {
             Stack<InternalNode> path = new Stack<>();
             while(node.equals(root) || node.getCapacity() != L){ // iterate till we reach the node.
                 CFNode nodeWithMinDis = getMinDistance((InternalNode)node, data);
-                path.push((InternalNode)node);
-                node = nodeWithMinDis.childPtr;
+                ((InternalNode)node).addVectorInfo(data); // updates nodes information
+                nodeWithMinDis.addVectorInfoToEntry(data); // updates CFdata information
+                path.push((InternalNode)node);// pushes node onto stack
+                node = nodeWithMinDis.childPtr; // moves to the cfNode's child Poitner which is a new INternal Node
             }
             minDistNode = node; // you can remove the var minDistance node
             // we have reached the node with the min distance from root to the leaf
@@ -57,32 +63,50 @@ public class Birch  {
 //TODO for now just insert the element int ot he leaf node.
                 isInserted = ((LeafNode)minDistNode).insert(data);
                 if(isInserted){
-                    ((LeafNode)minDistNode).getParentPtr().update(((LeafNode) minDistNode).getN(), ((LeafNode) minDistNode).getLS(), ((LeafNode) minDistNode).getSS());
+//                    updateMetaInformationofThisNode((LeafNode) minDistNode);
+//                    InternalNode pathNode = path.peek();
+//                    pathNode.metaSync(minDistNode.getDelta(), path);
                 }else{
                 //minDistNode is full create a new InterNode and add this.root as a child and mark teh new node as root.
-                    System.err.println("Split required.. here" + data);
+                    logger.info("Split required.. here" + data);
                     CFNode newCFNode= ((LeafNode)minDistNode).split(data);
+                    CFEntry delta = ((LeafNode)minDistNode).getDelta();
+                    
                     CFNode newCFNode1;
-                    InternalNode pathNode = path.pop();
+                    InternalNode pathNode = path.peek();
+                    updateMetaInformationofThisNode((LeafNode) minDistNode);
+                    pathNode.metaSync(delta,path);
+//                    path.pop();
                     // update minDistNode.parentPtr cf values.. after split
-                    ((LeafNode)minDistNode).getParentPtr().update(((LeafNode) minDistNode).getN(), ((LeafNode) minDistNode).getLS(), ((LeafNode) minDistNode).getSS());
-                    while(path.size() > 0 && pathNode.insert(newCFNode)){
+                    while(path.size() > 0 && !pathNode.insert(newCFNode)){
                         newCFNode1= pathNode.split(newCFNode);
-                        pathNode.getParentPtr().update(pathNode.getN(), pathNode.getLS(), pathNode.getSS());
+                        delta = pathNode.getDelta();
+                        if(pathNode.getParentPtr()!= null){
+                            pathNode.getParentPtr().update(pathNode.getN(), pathNode.getLS(), pathNode.getSS());
+                        }else{
+                            InternalNode root = new InternalNode(M, null , false);
+                            root.insert(newCFNode1);
+                            CFNode pathNodeCFNode = new CFNode(pathNode, new CFEntry(pathNode.getN(), pathNode.getLS(), pathNode.getSS()));
+                            root.insert(pathNodeCFNode);
+                            this.root = root;
+                            break;
+                        }
                         newCFNode = newCFNode1;
-                        pathNode = path.pop();
+                        pathNode = path.peek();
+                        pathNode.metaSync(delta, path);
+                        path.pop();
                     }
                     if(path.size() == 0){
                         // reached root 
-                        InternalNode root = new InternalNode(M, null , false);
-                        root.insert(newCFNode);
-                        CFNode pathNodeCFNode = new CFNode(pathNode, new CFEntry(pathNode.getN(), pathNode.getLS(), pathNode.getSS())); 
-                        root.insert(pathNodeCFNode);
-                        this.root = root;
+//                        InternalNode root = new InternalNode(M, null , false);
+//                        root.insert(newCFNode);
+//                        CFNode pathNodeCFNode = new CFNode(pathNode, new CFEntry(pathNode.getN(), pathNode.getLS(), pathNode.getSS())); 
+//                        root.insert(pathNodeCFNode);
+//                        this.root = root;
                     }// else.. data is consumed some where consumed
-                    else{
-                        // update till teh root the CF pointers
-                    }
+//                    else{
+//                        // update till teh root the CF pointers
+//                    }
                     
                     
                 }
@@ -91,7 +115,11 @@ public class Birch  {
             }
         }
     }
-    
+
+    private void updateMetaInformationofThisNode(LeafNode leafNode) {
+        leafNode.getParentPtr().update(leafNode.getN(), leafNode.getLS(), leafNode.getSS());
+    }
+
     public String levelOrderTraversal(){
         StringBuilder sb = new StringBuilder();
         if(this.root != null){
@@ -110,9 +138,13 @@ public class Birch  {
                             break;
                         }
                     }else{
+                        sb.append("\n");
                         for(int i = 0 ; i < temp.size(); i++){
+                            sb.append("Centroid: ");
+                            sb.append(Distances.getCentroid(temp.get(i).getEntry().n, temp.get(i).getEntry().LS));
+                            sb.append(" :: ");
                             sb.append(temp.get(i));
-                            sb.append("\t");
+                            sb.append("\n");
                             if(temp.get(i).getChildPtr().getCapacity() == M){
                                 queue.add((InternalNode) temp.get(i).getChildPtr());
                             }
@@ -139,9 +171,9 @@ public class Birch  {
             }
         }
         if(minSofarRef == null) {
-            System.err.println("getMinDistance.. not working as expected");
+            logger.error("getMinDistance.. not working as expected");
         }else{
-            System.out.println("getMinDistance.. returned.. "+dist + data + "-->"+ minSofarRef);
+            logger.debug("getMinDistance.. returned.. "+dist + data + "-->"+ minSofarRef);
         }
         return minSofarRef;
     }

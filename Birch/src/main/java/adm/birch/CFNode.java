@@ -1,3 +1,5 @@
+package adm.birch;
+
 /**
  * Created by nagasaty on 4/20/17.
  */
@@ -31,7 +33,11 @@ public class CFNode {
         return String.format("(%s-->%s)", entry, childPtr);
     }
 
-    public void update(int n, Vector ls, Vector ss) {
-        this.entry.update(n, ls, ss);
+    public CFEntry update(int n, Vector ls, Vector ss) {
+        return this.entry.update(n, ls, ss);
+    }
+
+    public void addVectorInfoToEntry(Vector data) {
+        
     }
 }
