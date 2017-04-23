@@ -6,7 +6,7 @@ import java.util.Arrays;
  * Created by nagasaty on 4/15/17.
  */
 public class Vector {
-    double[] x;
+    public double[] x;
     int len;
     public Vector(int capacity) {
         if(capacity <= 0 ) System.err.println("No of columns should be greater than 0");

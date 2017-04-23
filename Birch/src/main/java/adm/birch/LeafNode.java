@@ -110,6 +110,7 @@ public class LeafNode extends Node<Vector>{
     
     @Override
     public boolean insert(Vector dataPoint) {
+        
         if(this.points.size() < getCapacity()){
             int n = this.getN();
             Vector ls = this.getLS();

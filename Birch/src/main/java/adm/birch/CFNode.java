@@ -33,11 +33,14 @@ public class CFNode {
         return String.format("(%s-->%s)", entry, childPtr);
     }
 
-    public CFEntry update(int n, Vector ls, Vector ss) {
-        return this.entry.update(n, ls, ss);
+    public void update(CFEntry delta) {
+        this.entry.update(delta.n, delta.LS , delta.SS);
     }
 
     public void addVectorInfoToEntry(Vector data) {
+        this.entry.n+= 1;
+        this.entry.LS.addToThis(data);
+        this.entry.SS.addToThis(data.square());
         
     }
 }

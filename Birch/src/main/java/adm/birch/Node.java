@@ -99,6 +99,7 @@ abstract class Node<T>{
         for(int i = 0 ; i < path.size(); i++){
             InternalNode node = path.get(i);
             node.appendDelta(delta);
+            if(node.getParentPtr()!=null) node.getParentPtr().update(delta);
         }
     }
 }

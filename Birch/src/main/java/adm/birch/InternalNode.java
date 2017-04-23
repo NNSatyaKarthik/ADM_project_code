@@ -85,12 +85,12 @@ public class InternalNode extends Node<CFNode>{
     
     @Override
     public boolean insert(CFNode dataPoint) {
-        if(this.points.size() < getCapacity()){
+        if(this.points.size() < getCapacity() ){
             int n = this.getN();
             Vector ls = this.getLS();
             Vector ss = this.getSS();
             add(dataPoint);
-            if(ls!= null && ss!=null) setDelta(new CFEntry(this.getN()-n, this.getLS().sub(ls), this.getSS().sub(ss)));
+            if(ls!= null && ss!=null) this.setDelta(new CFEntry(this.getN()-n, this.getLS().sub(ls), this.getSS().sub(ss)));
             return true;
         }else 
             return false;

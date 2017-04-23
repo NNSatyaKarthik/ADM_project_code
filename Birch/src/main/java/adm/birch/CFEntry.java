@@ -19,11 +19,9 @@ public class CFEntry {
         return String.format("(%d, %s, %s)", n, LS, SS);
     }
 
-    public CFEntry update(int n, Vector ls, Vector ss) {
-        CFEntry delta = new CFEntry(this.n-n, this.LS.sub(ls), this.SS.sub(ss));
-        this.n = n;
-        this.LS = ls;
-        this.SS = ss;
-        return delta;
+    public void update(int n, Vector ls, Vector ss) {
+        this.n += n;
+        this.LS.addToThis(ls);
+        this.SS.addToThis(ss);
     }
 }

@@ -74,7 +74,7 @@ public class Birch  {
                     
                     CFNode newCFNode1;
                     InternalNode pathNode = path.peek();
-                    updateMetaInformationofThisNode((LeafNode) minDistNode);
+                    updateMetaInformationofThisNode((LeafNode) minDistNode, delta);
                     pathNode.metaSync(delta,path);
 //                    path.pop();
                     // update minDistNode.parentPtr cf values.. after split
@@ -82,7 +82,7 @@ public class Birch  {
                         newCFNode1= pathNode.split(newCFNode);
                         delta = pathNode.getDelta();
                         if(pathNode.getParentPtr()!= null){
-                            pathNode.getParentPtr().update(pathNode.getN(), pathNode.getLS(), pathNode.getSS());
+                            pathNode.getParentPtr().update(delta);
                         }else{
                             InternalNode root = new InternalNode(M, null , false);
                             root.insert(newCFNode1);
@@ -96,19 +96,11 @@ public class Birch  {
                         pathNode.metaSync(delta, path);
                         path.pop();
                     }
-                    if(path.size() == 0){
-                        // reached root 
-//                        InternalNode root = new InternalNode(M, null , false);
-//                        root.insert(newCFNode);
-//                        CFNode pathNodeCFNode = new CFNode(pathNode, new CFEntry(pathNode.getN(), pathNode.getLS(), pathNode.getSS())); 
-//                        root.insert(pathNodeCFNode);
-//                        this.root = root;
-                    }// else.. data is consumed some where consumed
-//                    else{
-//                        // update till teh root the CF pointers
-//                    }
-                    
-                    
+                    delta = pathNode.getDelta();
+                    if(pathNode.getParentPtr()!= null){
+                        pathNode.getParentPtr().update(delta);
+                    }
+                    pathNode.metaSync(delta, path);
                 }
             }else{
                 System.err.println("While loop didn't reach the leaf node. in insert ");
@@ -116,8 +108,9 @@ public class Birch  {
         }
     }
 
-    private void updateMetaInformationofThisNode(LeafNode leafNode) {
-        leafNode.getParentPtr().update(leafNode.getN(), leafNode.getLS(), leafNode.getSS());
+    //cf node
+    private void updateMetaInformationofThisNode(LeafNode leafNode, CFEntry delta) {
+        leafNode.getParentPtr().update(delta);
     }
 
     public String levelOrderTraversal(){
@@ -133,7 +126,7 @@ public class Birch  {
                     if(temp == null){
                         if(queue.size() > 0){
                             queue.add(null);
-                            sb.append("\n");
+                            sb.append("level\n");
                         }else{
                             break;
                         }
@@ -178,9 +171,6 @@ public class Birch  {
         return minSofarRef;
     }
 
-    // splits the nodes dataPoints and new dataPoint into 2parts.
-//    private Node<X> split(Node<X> node, X data) {
-//        return  null;
-//    }
+
 
 }

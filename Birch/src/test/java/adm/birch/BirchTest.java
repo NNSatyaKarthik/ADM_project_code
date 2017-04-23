@@ -1,9 +1,15 @@
 package adm.birch;
 
 import adm.birch.Vector;
+import org.apache.commons.io.FileUtils;
 import org.junit.*;
+import org.junit.Test;
+import utilities.FileReaders;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nagasaty on 4/20/17.
@@ -39,4 +45,17 @@ public class BirchTest {
         System.out.println(birch.levelOrderTraversal());
     }
 
+    @Test
+    public void testScikitDataset() throws IOException {
+        FileReaders frs = new FileReaders("/Users/nagasaty/0classes/adm/adm_project/values.csv", ",");
+        List<Vector> vectors = frs.getVectors(-1);
+        Birch birch = new Birch(0, 3, 6);
+        for(Vector point: vectors){
+            birch.insert(point);
+        }
+        File f= new File("/Users/nagasaty/0classes/adm/adm_project/levelOrderTraversal.output");
+        String s = birch.levelOrderTraversal();
+        
+        FileUtils.writeStringToFile(f, s);
+    }
 }
