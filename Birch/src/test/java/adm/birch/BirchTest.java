@@ -45,7 +45,7 @@ public class BirchTest {
         }
         System.out.println(birch.getRoot());
         System.out.println(birch.levelOrderTraversal());
-        Map<Integer, List<Vector>> res = birch.labelData(3);
+        Map<Integer, List<Vector>> res = birch.labelData(4);
         for (Integer label : res.keySet()){
             List<Vector> list = res.get(label);
             for(Vector v : list){

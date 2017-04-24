@@ -169,7 +169,8 @@ public class InternalNode extends Node<CFNode>{
         this.SS.setValues(x.SS);
         this.n.setValues(x.getN());
         logger.debug("New Entry values of CFENtry is : (after split) ("+this.n.value+", "+this.LS+", "+this.SS+")");
-                
+        logger.debug("x: "+x);
+        logger.debug("y:"+y);
         e.n = this.n.sub(e.n);
         e.LS = this.LS.sub(e.LS);
         e.SS = this.SS.sub(e.SS);

@@ -31,6 +31,7 @@ public class Birch  {
         LeafNode ltemp;
         InternalNode itemp;
         boolean isInserted;
+        boolean internalNodeState = false;
         if(this.root == null){// create new Node.. and then insert
             itemp = new InternalNode(M, null, false); // creates a internal node
             ltemp = new LeafNode(L, itemp, true); // creates a new leaf node
@@ -90,6 +91,7 @@ public class Birch  {
                         newCFNode1= pathNode.split(newCFNode);
                         logger.debug("State of tree after split: "+this.root);
                         if(pathNode.getParentPtr()!= null){
+                            internalNodeState = true;
                             delta = pathNode.getDelta();
                             logger.debug("Delta after split of internal node is : "+delta);
                             logger.debug(pathNode+"-- paret pointer is not null, updating cfinfo and parento to root info till the root with ");
@@ -128,7 +130,12 @@ public class Birch  {
 //                    if(pathNode.getParentPtr()!= null){
 //                        pathNode.getParentPtr().update(delta);
 //                    }
-                    if(pathNode.getParentPtr()!=null) pathNode.metaSync(delta, path);
+                    if(pathNode.getParentPtr()!=null) {
+                        if(internalNodeState){
+                            pathNode.metaSync(delta, path, 1);
+                        }
+                        else pathNode.metaSync(delta, path);
+                    }
                     logger.debug("Tree state after insert of "+data +" is : "+this.root);
                 }
             }else{
@@ -210,38 +217,54 @@ public class Birch  {
     }
 
     public Map<Integer, List<Vector>> labelData(int numberOfClusters){
-        int levels = (int)Math.floor(Math.log(numberOfClusters)/Math.log(this.M))-1;
+        int levels = (int)Math.floor(Math.log(numberOfClusters)/Math.log(this.M));
         Queue<InternalNode> inodes = new LinkedList<>();
         inodes.add((InternalNode) this.root);
         inodes.add(null);
         InternalNode temp;
         int label = 0;
+        int clusters = 0;
         Map<InternalNode, Integer> cfNodesMap = new HashMap<>();
         while(inodes.size() > 0){
             temp = inodes.poll();
             if(temp == null){
-                if(inodes.size() > 0 && levels>= 0){
+                if(inodes.size() >= numberOfClusters){
+                    break;
+                }
+                clusters = 0;
+                if(inodes.size() > 0 ){
                     inodes.offer(null);
                 }else{
                     break;
                 }
             }else{
-                if(levels > 0){
+                clusters++;
+//                if(levels > 0){
                     for(int i = 0 ; i < temp.points.size(); i++){
                         if(temp.points.get(i).getChildPtr() instanceof InternalNode){
                             inodes.offer((InternalNode) temp.points.get(i).childPtr);
                         }
                     }
-                }else {
-                    for(int i = 0 ; i < temp.points.size(); i++){
-                        if(temp.points.get(i).getChildPtr() instanceof InternalNode){
-                            cfNodesMap.put((InternalNode) temp.points.get(i).childPtr, label++);
-                        }
-                    }
+//                }else {
+//                    for(int i = 0 ; i < temp.points.size(); i++){
+//                        if(temp.points.get(i).getChildPtr() instanceof InternalNode){
+//                            cfNodesMap.put((InternalNode) temp.points.get(i).childPtr, label++);
+//                        }
+//                    }
                     
-                }
+//                }
             }
             levels--;
+        }
+        System.out.println(inodes.size());
+        while(inodes.size() > 0) {
+            temp = inodes.poll();
+            cfNodesMap.put((InternalNode)temp, label++);
+//            for (int i = 0; i < temp.points.size(); i++) {
+//                if (temp.points.get(i).getChildPtr() instanceof InternalNode) {
+//                    cfNodesMap.put((InternalNode) temp.points.get(i).childPtr, label++);
+//                }
+//            }
         }
 
 
