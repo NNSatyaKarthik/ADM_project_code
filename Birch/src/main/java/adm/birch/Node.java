@@ -69,7 +69,7 @@ abstract class Node<T>{
     
     abstract public Vector getLS();
     abstract public Vector getSS();
-    abstract public int getN();
+    abstract public IntegerObj getN();
     
     public Node getParentNodePtr() {
         return parentNodePtr;
@@ -92,14 +92,19 @@ abstract class Node<T>{
     }
     
     public CFEntry getDelta(){
-        return this.delta;
+        CFEntry res = this.delta;
+        this.delta = null;
+        return res;
     }
 
-    public void metaSync(CFEntry delta, Stack<InternalNode> path){
-        for(int i = 0 ; i < path.size(); i++){
+    public void metaSync(CFEntry delta, Stack<InternalNode> path, int d){
+        for(int i = 0; i < path.size()-d; i++){
             InternalNode node = path.get(i);
             node.appendDelta(delta);
-            if(node.getParentPtr()!=null) node.getParentPtr().update(delta);
+//            if(node.getParentPtr()!=null) node.getParentPtr().update(delta);
         }
+    }
+    public void metaSync(CFEntry delta, Stack<InternalNode> path){
+        metaSync(delta, path, 0);
     }
 }

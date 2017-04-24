@@ -1,7 +1,4 @@
 package adm.birch;
-import adm.birch.CFEntry;
-import adm.birch.CFNode;
-import adm.birch.Distances;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -16,6 +13,7 @@ public class LeafNode extends Node<Vector>{
     List<Vector> points = null;
     private Vector LS;
     private Vector SS;
+    private IntegerObj n;
     
     public LeafNode(int capacity, Node parentPtr, boolean isLeaf) {
         super(capacity, parentPtr, isLeaf);
@@ -27,7 +25,6 @@ public class LeafNode extends Node<Vector>{
         this.points = new ArrayList<>(capacity+1);
         for(Vector point : points){
             this.add(point);
-//            logger.info(point + "--" + this.LS + "--"+ this.SS);
         }
     }
 
@@ -61,6 +58,8 @@ public class LeafNode extends Node<Vector>{
     public void add(int index, Vector point){
         if(point != null){
             points.add(index, point);
+            if(this.n != null) this.n.addToThis(1);
+            else this.n = new IntegerObj(1);
             if(this.LS != null) this.LS.addToThis(point);
             else this.LS = new Vector(point.x);
 
@@ -77,8 +76,8 @@ public class LeafNode extends Node<Vector>{
         return (index < this.points.size())?this.points.get(index):null;
     }
 
-    public int getN() {
-        return points.size();
+    public IntegerObj getN() {
+        return this.n;
     }
 
     public Vector getLS() {
@@ -109,14 +108,10 @@ public class LeafNode extends Node<Vector>{
     public int size(){ return this.points.size();}
     
     @Override
+    // NOTE: no need of delta pointers for leaf node .. dont complicate the code
     public boolean insert(Vector dataPoint) {
-        
         if(this.points.size() < getCapacity()){
-            int n = this.getN();
-            Vector ls = this.getLS();
-            Vector ss = this.getSS();
-            add(dataPoint);
-            if(ls!= null && ss!=null) setDelta(new CFEntry(this.getN()-n, this.getLS().sub(ls), this.getSS().sub(ss)));
+            add(dataPoint); // add the point to the data set and return
             return true;
         }
         return false;
@@ -130,10 +125,9 @@ public class LeafNode extends Node<Vector>{
         int maxSofarI = -1, maxSofarJ = -1;
         
         this.add(dataPoint);
-        int n = this.points.size();
         
-        for (int i = 0; i < n; i++) {
-            for(int j = i+1; j < n ;j++){
+        for (int i = 0; i < this.n.value; i++) {
+            for(int j = i+1; j < this.n.value ;j++){
                 dist = Distances.getD0(this.points.get(i), this.points.get(j));
                 if(dist > maxSofar){
                     maxSofar = dist;
@@ -143,32 +137,29 @@ public class LeafNode extends Node<Vector>{
             }
         }
         
-        if(maxSofarI == -1 || maxSofarJ == -1){
-            logger.error("Max sofar is not updated...");
-//            System.exit(255);
-        }
+        if(maxSofarI == -1 || maxSofarJ == -1) logger.error("Max sofar is not updated...");
         
         Vector src = this.points.get(maxSofarI);
         Vector dest = this.points.get(maxSofarJ);
-        
-        this.points.set(maxSofarI, null); this.points.set(maxSofarJ, null);
         
          // iterate again and see which one is nearer.
         LeafNode x = new LeafNode(getCapacity(), null, true);
         LeafNode y = new LeafNode(getCapacity(), null, true);
         x.add(src); // added src to x cluster
         y.add(dest); // added dest to y cluster
-        double dx = 0 , dy = 0 ; 
-        for(Vector point : points){
-            if(point != null){ // as we are making src and dest null.. (already added above)
-                dx = Distances.getD0(Distances.getCentroid(x.getN(), x.getLS()),point); // distance from centroid to curr vector
-                dy = Distances.getD0(Distances.getCentroid(y.getN(), y.getLS()),point); // distance from centroid to curr vector
+        double dx = 0 , dy = 0 ;
+        for (int i = 0; i < points.size(); i++) {
+            if(i == maxSofarI || i == maxSofarJ) continue;
+            Vector point = points.get(i);
+            if (point != null) { // as we are making src and dest null.. (already added above)
+                dx = Distances.getD0(Distances.getCentroid(x.getN().value, x.getLS()), point); // distance from centroid to curr vector
+                dy = Distances.getD0(Distances.getCentroid(y.getN().value, y.getLS()), point); // distance from centroid to curr vector
                 //TODO min criteria condition (that x cluster should contain L leves minimum inorder to maintain the height of the tree) is not satisfied here.
                 // TODO threshold constraint (that all the vectors in this cluster should be < T.. not taken care of here..For now considers relative lower distance 
                 // TODO this has to be implemented in a cleaner way)is not yet implementeed
-                if(dx < dy){
+                if (dx < dy) {
                     x.add(point);
-                }else{
+                } else {
                     y.add(point);
                 }
             }
@@ -177,12 +168,15 @@ public class LeafNode extends Node<Vector>{
         
         // no need to set this.. as the parent pointer is not changed .. here
 //        x.setParentPtr(this.getParentPtr());// update x parent pointer to currentnodes parent pointer
-        this.setDelta(new CFEntry(x.getN()-this.getN(), x.getLS().sub(this.getLS()), x.getSS().sub(this.getSS())));
+        this.setDelta(new CFEntry(x.getN().sub(this.getN()), new Vector((x.getLS().sub(this.getLS())).x), new Vector((x.getSS().sub(this.getSS())).x)));
+        logger.debug(this);
         this.points = x.points;// update x values to the current node
-        this.LS = x.LS;
-        this.SS = x.SS;
+        this.LS.setValues(x.getLS());
+        this.SS.setValues(x.getSS());
+        this.n.setValues(x.getN());
         
-        CFNode cfNode = new CFNode(y, new CFEntry(y.getN(), y.getLS(), y.getSS()));
+        logger.debug(this);
+        CFNode cfNode = new CFNode(y);
         y.setParentPtr(cfNode); // set y's parent to yi 
         
         // return yi

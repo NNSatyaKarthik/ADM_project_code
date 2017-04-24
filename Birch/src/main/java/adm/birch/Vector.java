@@ -61,12 +61,12 @@ public class Vector {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         String delimiter = ", ";
-        sb.append("(");
+//        sb.append("(");
         for (int i = 0; i < this.len; i++) {
             sb.append(this.x[i]);
             if(i!= (this.len-1)) sb.append(delimiter);
         }
-        sb.append(")");
+//        sb.append(")");
         return sb.toString();
     }
 
@@ -131,5 +131,11 @@ public class Vector {
             res += ((this.x[i] >0 )?this.x[i]:-this.x[i]);
         }
         return res;
+    }
+
+    public void setValues(Vector ss) {
+        for(int i = 0 ; i < this.len; i++){
+            this.x[i] = ss.x[i];
+        }
     }
 }
