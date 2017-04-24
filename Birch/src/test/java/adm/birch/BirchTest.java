@@ -8,6 +8,8 @@ import utilities.FileReaders;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,16 +65,20 @@ public class BirchTest {
         for(Vector point: vectors){
             birch.insert(point);
         }
-        File f= new File("/Users/nagasaty/0classes/adm/adm_project/levelOrderTraversal.output");
+        File f= new File("/Users/nagasaty/0classes/adm/adm_project/values_labeled.output.csv");
         String s = birch.levelOrderTraversal();
 //        System.out.printf("%s",s);
-        Map<Integer, List<Vector>> res = birch.labelData(18);
+        StringBuilder sb = new StringBuilder();
+        Map<Integer, List<Vector>> res = birch.labelData(1);
         for (Integer label : res.keySet()){
             List<Vector> list = res.get(label);
             for(Vector v : list){
+                sb.append(String.format("%s,%d\n", v, label));
 //                System.out.printf("%s,%d\n", v, label);
             }
         }
-//        FileUtils.writeStringToFile(f, s);
+        System.out.println(sb.toString());
+        if(Files.exists(Paths.get(f.getAbsolutePath()))) Files.delete(Paths.get(f.getAbsolutePath()));
+        FileUtils.writeStringToFile(f, sb.toString());
     }
 }
