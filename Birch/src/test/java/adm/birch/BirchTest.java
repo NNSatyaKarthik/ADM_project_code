@@ -7,12 +7,15 @@ import org.junit.Test;
 import utilities.FileReaders;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Created by nagasaty on 4/20/17.
@@ -80,5 +83,10 @@ public class BirchTest {
         System.out.println(sb.toString());
         if(Files.exists(Paths.get(f.getAbsolutePath()))) Files.delete(Paths.get(f.getAbsolutePath()));
         FileUtils.writeStringToFile(f, sb.toString());
+    }
+    
+    @Test
+    public void readMtxFile() throws FileNotFoundException {
+        
     }
 }

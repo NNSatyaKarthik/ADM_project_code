@@ -8,7 +8,7 @@ import java.util.*;
  */
 //    B is for Branch Node
 //    E is for Element Node
-public class Birch  {
+public class Birch{
     final static Logger logger = Logger.getLogger(Birch.class); 
     private int M; 
     private int L;

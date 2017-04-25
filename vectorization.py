@@ -22,12 +22,12 @@ start = timeit.default_timer()
 path ="data/"
 
 #files_list = [f for f in listdir(path)]
-files_list = ["2015_08_000000000029"]
+files_list = ["2015_08_000000000029.gz"]
 # files_list = ["sample_filtering_text.csv"]
 
 class vectorization():
     def __init__(self,filename):
-        df = pd.read_csv(filename)
+        df = pd.read_csv(filename, compression="gzip")
         self.filename = filename
         #self.comments = list(df["body"])
         self.filtered = []

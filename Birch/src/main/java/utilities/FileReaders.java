@@ -22,7 +22,6 @@ public class FileReaders {
         this.it = FileUtils.lineIterator(new File(csvFile));
         this.csvFile = csvFile;
         this.delimiter = delimiter;
-        
     }
     
     // pass in the -1 to get the full data set
