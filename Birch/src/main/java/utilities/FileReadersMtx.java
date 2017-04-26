@@ -55,18 +55,19 @@ public class FileReadersMtx {
     }
 
     // pass in the -1 to get the full data set
-    public List<SVector> getVectors(int limit){
+    public List<Vector> getVectors(int limit){
         if(this.it == null){
             logger.error("FIle reader not initialized properly..returning null");
             return null;
         }
-        List<SVector> res = new ArrayList<>();
+        List<Vector> res = new ArrayList<>();
         String line = "";
         Vector vline; 
         String[] aline;
         long row, col, rowNum =-1;
         double val;
-        SVector v = null;
+        Vector v = null;
+        int capacity = (int)this.cols;
         while((limit == -1 || limit > 0) && it.hasNext()){
             line = it.nextLine();
             aline = line.split(this.delimiter);
@@ -74,7 +75,7 @@ public class FileReadersMtx {
             col = Long.parseLong(aline[1]);
             val = Double.parseDouble(aline[2]);
             if(rowNum == -1) {
-                v = new SVector();
+                v = new Vector(capacity);
                 rowNum = row;
             }
             
@@ -84,7 +85,7 @@ public class FileReadersMtx {
             }else{
                 // create new and insert
                 res.add(v);
-                v = new SVector();
+                v = new Vector(capacity);
                 v.put(col, val);
                 rowNum = row;
             }
@@ -99,7 +100,7 @@ public class FileReadersMtx {
 
     public static void main(String[] args) throws IOException {
         FileReadersMtx frs = new FileReadersMtx("/Users/nagasaty/0classes/adm/adm_project/sample.Mtx", " ",2);
-        List<SVector> v = frs.getVectors(-1);
+        List<Vector> v = frs.getVectors(-1);
         System.out.println(v.size());
         for (int i = 0; i < v.size(); i++) {
             System.out.format("%d,%s", i,v.get(i));

@@ -35,10 +35,10 @@ public class Birch{
         if(this.root == null){// create new Node.. and then insert
             itemp = new InternalNode(M, null, false); // creates a internal node
             ltemp = new LeafNode(L, itemp, true); // creates a new leaf node
-            isInserted = ltemp.insert(data); // inserts data into the leaf node
+            isInserted = ltemp.insert(data); // inserts x into the leaf node
             if(isInserted){
                 CFNode n = new CFNode(ltemp);
-                isInserted = itemp.insert(n); // inserts data of the leaf node ot hte parent node
+                isInserted = itemp.insert(n); // inserts x of the leaf node ot hte parent node
                 ltemp.setParentPtr(n); // parent ptr of leaf node is set to cfnode in the internal ndoe
                 this.root = itemp; // mark teh root as internal node
             }else{
@@ -53,7 +53,7 @@ public class Birch{
             while(node.equals(root) || !(node instanceof LeafNode)){ // iterate till we reach the node.
                 CFNode nodeWithMinDis = getMinDistance((InternalNode)node, data);
                 ((InternalNode)node).addVectorInfo(data); // updates nodes information
-//                nodeWithMinDis.addVectorInfoToEntry(data); // updates CFdata information
+//                nodeWithMinDis.addVectorInfoToEntry(x); // updates CFdata information
                 path.push((InternalNode)node);// pushes node onto stack
                 node = nodeWithMinDis.childPtr; // moves to the cfNode's child Poitner which is a new INternal Node
             }
@@ -211,7 +211,7 @@ public class Birch{
         if(minSofarRef == null) {
             logger.error("getMinDistance.. not working as expected");
         }else{
-//            logger.debug("getMinDistance.. returned.. "+dist + data + "-->"+ minSofarRef);
+//            logger.debug("getMinDistance.. returned.. "+dist + x + "-->"+ minSofarRef);
         }
         return minSofarRef;
     }

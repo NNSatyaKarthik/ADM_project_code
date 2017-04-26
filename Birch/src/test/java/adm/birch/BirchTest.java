@@ -1,13 +1,12 @@
 package adm.birch;
 
-import adm.birch.Vector;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
 import org.junit.Test;
 import utilities.FileReaders;
+import utilities.FileReadersMtx;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +14,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * Created by nagasaty on 4/20/17.
@@ -63,16 +61,23 @@ public class BirchTest {
     public void testScikitDataset() throws IOException {
         FileReaders frs = new FileReaders("/Users/nagasaty/0classes/adm/adm_project/values.csv", ",");
         List<Vector> vectors = frs.getVectors(-1);
+        insertAndLabelData(vectors,0, 2, 4, "/Users/nagasaty/0classes/adm/adm_project/values_labeled.output.csv", 3);
+    }
+
+    private void insertAndLabelData(List<Vector> vectors, int threshold, int branchinfactor, int noOfLeaves, String outputFile, int numOfClusters) throws IOException {
         System.out.println(vectors.size());
-        Birch birch = new Birch(0, 3, 6);
+        Birch birch = new Birch(threshold, branchinfactor, noOfLeaves);
+        int c = 0;
         for(Vector point: vectors){
+            System.out.format("%d, %s\n" , c++, point);
             birch.insert(point);
         }
-        File f= new File("/Users/nagasaty/0classes/adm/adm_project/values_labeled.output.csv");
-        String s = birch.levelOrderTraversal();
+        File f= new File(outputFile);
+//        String s = birch.levelOrderTraversal();
 //        System.out.printf("%s",s);
+        System.out.println("Insertion Done");
         StringBuilder sb = new StringBuilder();
-        Map<Integer, List<Vector>> res = birch.labelData(1);
+        Map<Integer, List<Vector>> res = birch.labelData(numOfClusters);
         for (Integer label : res.keySet()){
             List<Vector> list = res.get(label);
             for(Vector v : list){
@@ -84,9 +89,13 @@ public class BirchTest {
         if(Files.exists(Paths.get(f.getAbsolutePath()))) Files.delete(Paths.get(f.getAbsolutePath()));
         FileUtils.writeStringToFile(f, sb.toString());
     }
-    
+
     @Test
-    public void readMtxFile() throws FileNotFoundException {
+    public void readMtxFile() throws IOException {
+        String basedir = "/Users/nagasaty/0classes/adm/adm_project/";
+        FileReadersMtx frs = new FileReadersMtx(basedir + "sample.Mtx", " ",2);
+        List<Vector> vectors = frs.getVectors(-1);
+        insertAndLabelData(vectors,0, 5, 10, basedir+ "sample_output.csv", 4);
         
     }
 }

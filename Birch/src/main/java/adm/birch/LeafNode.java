@@ -111,14 +111,14 @@ public class LeafNode extends Node<Vector>{
     // NOTE: no need of delta pointers for leaf node .. dont complicate the code
     public boolean insert(Vector dataPoint) {
         if(this.points.size() < getCapacity()){
-            add(dataPoint); // add the point to the data set and return
+            add(dataPoint); // add the point to the x set and return
             return true;
         }
         return false;
     }
     
-    // splits this leaf and the incoming data point.. and returns the new leafnode in addition to modifying this node.
-    // this nodes parent data should be update at the top layers
+    // splits this leaf and the incoming x point.. and returns the new leafnode in addition to modifying this node.
+    // this nodes parent x should be update at the top layers
     public CFNode split(Vector dataPoint){
         // chose 2 leaves which are farthest from each other
         double maxSofar = -1, dist;
@@ -164,7 +164,7 @@ public class LeafNode extends Node<Vector>{
                 }
             }
         }
-        // till here we got 2 leafnodes (new clusters x and y) populated with the data 
+        // till here we got 2 leafnodes (new clusters x and y) populated with the x 
         
         // no need to set this.. as the parent pointer is not changed .. here
 //        x.setParentPtr(this.getParentPtr());// update x parent pointer to currentnodes parent pointer

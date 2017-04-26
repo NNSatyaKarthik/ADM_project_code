@@ -61,10 +61,10 @@ public class CFNode {
 //        this.entry.update(delta.n, delta.LS , delta.SS);
 //    }
 
-//    public void addVectorInfoToEntry(Vector data) {
+//    public void addVectorInfoToEntry(Vector x) {
 //        this.entry.n+= 1;
-//        this.entry.LS.addToThis(data);
-//        this.entry.SS.addToThis(data.square());
+//        this.entry.LS.addToThis(x);
+//        this.entry.SS.addToThis(x.square());
 //        
 //    }
 }

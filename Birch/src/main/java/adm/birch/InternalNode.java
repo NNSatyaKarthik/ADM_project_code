@@ -108,7 +108,7 @@ public class InternalNode extends Node<CFNode>{
     }
 
     public CFNode split(CFNode dataPoint){
-        logger.debug("Incoming data point to split INternal node: "+dataPoint);
+        logger.debug("Incoming x point to split INternal node: "+dataPoint);
         CFEntry e =  new CFEntry(new IntegerObj(this.getN().value), new Vector(this.getLS().x), new Vector(this.getSS().x));
         logger.debug("cfnode "+dataPoint+"is adding to "+e +"-- in internal node"+this);
         // chose 2 leaves which are farthest from each other
@@ -159,7 +159,7 @@ public class InternalNode extends Node<CFNode>{
                 }
             }
         }
-        // till here we got 2 leafnodes populated with the data 
+        // till here we got 2 leafnodes populated with the x 
 
         // no need to set this.. as the parent pointer is not changed .. here
 //        x.setParentPtr(this.getParentPtr());// update x parent pointer to currentnodes parent pointer
