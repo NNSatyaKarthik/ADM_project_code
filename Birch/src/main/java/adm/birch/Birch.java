@@ -51,6 +51,7 @@ public class Birch{
             Node node = root;
             Stack<InternalNode> path = new Stack<>();
             while(node.equals(root) || !(node instanceof LeafNode)){ // iterate till we reach the node.
+                logger.debug((InternalNode)node);
                 CFNode nodeWithMinDis = getMinDistance((InternalNode)node, data);
                 ((InternalNode)node).addVectorInfo(data); // updates nodes information
 //                nodeWithMinDis.addVectorInfoToEntry(x); // updates CFdata information
@@ -201,6 +202,8 @@ public class Birch{
         double minSofar = -1, dist = -1;
         for(int i = 0 ; i < inode.size();i++){
             temp = inode.get(i);
+
+           // System.out.println(i);
             centroid = Distances.getCentroid(temp.n.value, temp.LS);
             dist = Distances.getD0(centroid, data);
             if(minSofar == -1 || Distances.getD0(centroid, data) < minSofar){

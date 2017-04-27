@@ -12,7 +12,9 @@ public class Distances {
         // centroid = sum(vectors)/len(vectors)
         
         if(points.size() ==0  ) return null;
-        Vector res = new Vector(points.get(0).x.length);
+        Integer size = points.get(0).getCapacity();
+        Vector res = new Vector(size);
+       //Vector res = new Vector(points.get(0).x.length);
         
         for (Vector item: points) 
             res.addToThis(item);

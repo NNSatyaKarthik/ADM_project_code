@@ -52,10 +52,10 @@ public class DataPoints {
         if(point != null){
             points.add(index, point);
             if(this.LS != null) this.LS.addToThis(point);
-            else this.LS = new Vector(point.x);
+            else this.LS = new Vector(point);
             
             if(this.SS != null) this.SS.addToThis(point.square());
-            else this.SS = (new Vector(point.x)).square();
+            else this.SS = (new Vector(point)).square();
         }
     }
     

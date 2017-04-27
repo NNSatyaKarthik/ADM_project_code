@@ -3,7 +3,7 @@ package adm.birch;
 import org.apache.commons.io.FileUtils;
 import org.junit.*;
 import org.junit.Test;
-import utilities.FileReaders;
+//import utilities.FileReaders;
 import utilities.FileReadersMtx;
 
 import java.io.File;
@@ -21,22 +21,22 @@ import java.util.Map;
 public class BirchTest {
     private ArrayList<Vector> points;
 
-    @Before
-    public void init() {
-        points = new ArrayList<Vector>();
-        Vector temp;
-        for (int i = 1; i < 25; i++) {
-            temp = new Vector(1);
-            temp.x[0] = i;
-            /*if(i %2 == 0){
-                xCluster.add(temp);
-            }else {
-                yCluster.add(temp);
-            */
-            points.add(temp);
-        }
-//            System.out.println(temp.square());
-    }
+//    @Before
+//    public void init() {
+//        points = new ArrayList<Vector>();
+//        Vector temp;
+//        for (int i = 1; i < 25; i++) {
+//            temp = new Vector(1);
+//            //temp.put(i,x[0])
+//            /*if(i %2 == 0){
+//                xCluster.add(temp);
+//            }else {
+//                yCluster.add(temp);
+//            */
+//            points.add(temp);
+//        }
+////            System.out.println(temp.square());
+//    }
 
     
     @org.junit.Test
@@ -59,12 +59,16 @@ public class BirchTest {
 
     @Test
     public void testScikitDataset() throws IOException {
-        FileReaders frs = new FileReaders("/Users/nagasaty/0classes/adm/adm_project/values.csv", ",");
-        List<Vector> vectors = frs.getVectors(-1);
-        insertAndLabelData(vectors,0, 2, 4, "/Users/nagasaty/0classes/adm/adm_project/values_labeled.output.csv", 3);
+//        FileReaders frs = new FileReaders("C:\\Users\\vivek\\Documents\\ADM_project_code\\data\\2015_08_000000000029.mtx", ",");
+//        List<Vector> vectors = frs.getVectors(-1);
+//        insertAndLabelData(vectors,0, 2, 4, "C:\\Users\\vivek\\Documents\\ADM_project_code\\data\\2015_08_000000000029_out.csv", 3);
+            String basedir = "C://Users/vivek/Documents/ADM_project_code/data/";
+            FileReadersMtx frs = new FileReadersMtx(basedir + "sample.Mtx", " ",2);
+            List<Vector> vectors = frs.getVectors(-1);
+            insertAndLabelData(vectors,0, 5, 10, basedir+ "sample_output.csv", 4);
     }
 
-    private void insertAndLabelData(List<Vector> vectors, int threshold, int branchinfactor, int noOfLeaves, String outputFile, int numOfClusters) throws IOException {
+    public void insertAndLabelData(List<Vector> vectors, int threshold, int branchinfactor, int noOfLeaves, String outputFile, int numOfClusters) throws IOException {
         System.out.println(vectors.size());
         Birch birch = new Birch(threshold, branchinfactor, noOfLeaves);
         int c = 0;
@@ -92,10 +96,10 @@ public class BirchTest {
 
     @Test
     public void readMtxFile() throws IOException {
-        String basedir = "/Users/nagasaty/0classes/adm/adm_project/";
+        String basedir = "C://Users/vivek/Documents/ADM_project_code/data/";
         FileReadersMtx frs = new FileReadersMtx(basedir + "sample.Mtx", " ",2);
         List<Vector> vectors = frs.getVectors(-1);
-        insertAndLabelData(vectors,0, 5, 10, basedir+ "sample_output.csv", 4);
+        insertAndLabelData(vectors,0, 5, 10, basedir+ "sample.csv", 4);
         
     }
 }

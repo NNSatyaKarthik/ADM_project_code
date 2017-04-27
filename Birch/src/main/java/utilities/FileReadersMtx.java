@@ -1,6 +1,6 @@
 package utilities;
 
-import adm.birch.SVector;
+//import adm.birch.SVector;
 import adm.birch.Vector;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;

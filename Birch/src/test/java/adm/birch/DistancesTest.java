@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static com.sun.xml.internal.ws.dump.LoggingDumpTube.Position.Before;
 import static org.junit.Assert.*;
 
 /**
@@ -26,8 +27,8 @@ public class DistancesTest {
         Vector temp;
         for(int i = 1 ;  i < 11 ; i++){
             temp  = new Vector(2);
-            temp.x[0] = i;
-            temp.x[1] = i;
+            temp.put(0,i);
+            temp.put(1 ,i);
             if(i %2 == 0){
                 xCluster.add(temp);
             }else {

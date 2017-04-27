@@ -61,10 +61,10 @@ public class LeafNode extends Node<Vector>{
             if(this.n != null) this.n.addToThis(1);
             else this.n = new IntegerObj(1);
             if(this.LS != null) this.LS.addToThis(point);
-            else this.LS = new Vector(point.x);
+            else this.LS = new Vector(point);
 
             if(this.SS != null) this.SS.addToThis(point.square());
-            else this.SS = (new Vector(point.x)).square();
+            else this.SS = (new Vector(point)).square();
         }
     }
 
@@ -168,7 +168,7 @@ public class LeafNode extends Node<Vector>{
         
         // no need to set this.. as the parent pointer is not changed .. here
 //        x.setParentPtr(this.getParentPtr());// update x parent pointer to currentnodes parent pointer
-        this.setDelta(new CFEntry(x.getN().sub(this.getN()), new Vector((x.getLS().sub(this.getLS())).x), new Vector((x.getSS().sub(this.getSS())).x)));
+        this.setDelta(new CFEntry(x.getN().sub(this.getN()), new Vector((x.getLS().sub(this.getLS())).getCapacity()), new Vector((x.getSS().sub(this.getSS())).getCapacity())));
         logger.debug(this);
         this.points = x.points;// update x values to the current node
         this.LS.setValues(x.getLS());

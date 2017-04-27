@@ -1,4 +1,4 @@
-package utilities;
+/*package utilities;
 
 import adm.birch.Vector;
 import org.apache.commons.io.FileUtils;
@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by nagasaty on 4/23/17.
- */
+
 public class FileReaders {
     Logger logger = Logger.getLogger(FileReaders.class);
     String  delimiter = ",";
@@ -52,3 +50,4 @@ public class FileReaders {
 
     }
 }
+*/

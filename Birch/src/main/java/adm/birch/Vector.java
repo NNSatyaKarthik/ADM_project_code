@@ -1,147 +1,180 @@
 package adm.birch;
 
-import java.util.Arrays;
+import java.util.HashMap;
 
 /**
- * Created by nagasaty on 4/15/17.
+ * Created by nagasaty on 4/25/17.
  */
 public class Vector{
-    public double[] x;
-    int len;
-    
+    HashMap<Long, Double> x;
+    int capacity;
+
     public Vector(int capacity) {
-        
-        if(capacity <= 0 ) System.err.println("No of columns should be greater than 0");
-        x = new double[capacity];
-        this.len = capacity;
-    }
-    
-    public Vector(double[] data){
-        this.x = Arrays.copyOf(data, data.length);
-        this.len = this.x.length;
+        this.x = new HashMap<>();
+        this.capacity = capacity;
     }
 
-    public Vector add(Vector y){
-        Vector res = new Vector(this.x);
-        res.addToThis(y);
-        return res;
+    public Vector(Vector point){
+        this.x = new HashMap<>();
+        this.capacity = point.getCapacity();
+        for(Long key: point.x.keySet()){
+           // System.out.println(point.x.get(key));
+            this.x.put(key,point.x.get(key));
+        }
     }
-    
-    public void addToThis(Vector y){
-        if(this.len!= y.len) {
-            System.err.println("vector lengths do not match");
-            return;
+
+    public int getCapacity(){
+        return this.capacity;
+    }
+
+    public void put(long col, double val) {
+        this.x.put(col, val);
+    }
+
+    public Vector add(Vector y) {
+        Vector res = new Vector(y.getCapacity());
+        for(long key: this.x.keySet()){
+            res.put(key, this.x.get(key));
         }
         
-        for(int i = 0 ; i < this.len; i++){
-            this.x[i] += y.x[i];
+        for(long key: y.x.keySet()){
+            res.put(key, res.x.getOrDefault(key, 0.0)+y.x.get(key));
+        }
+        return res;
+    }
+
+    public void addToThis(Vector y) {
+        for(long key: y.x.keySet()){
+            this.x.put(key, this.x.getOrDefault(key, 0.0)+y.x.get(key));
         }
     }
 
     public void divThis(double param) {
-        if(param == 0) return;
-        for(int i = 0 ; i < this.len; i++){
-            this.x[i] /= param;
+        if(param == 0)return;
+        for(long key: this.x.keySet()){
+            this.x.put(key, this.x.get(key)/param);
         }
     }
-    
-    public Vector div(double param){
-        Vector res = new Vector(this.x);
-        res.divThis(param);
-        return res;
-    }
-    
-    public double val(){
-        double res = 0; 
-        for(int i = 0 ; i < this.len; i++){
-            res += this.x[i];
+
+    public Vector div(double param) {
+        if(param ==0 ) return null;
+        Vector res = new Vector(this.capacity);
+        for(long key: this.x.keySet()){
+            res.put(key, this.x.get(key)/param);
         }
         return res;
     }
-    
+
+    public double val() {
+        double res = 0;
+        for(long key: this.x.keySet()){
+            res+= this.x.get(key);
+        }
+        return res;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        String delimiter = ", ";
-//        sb.append("(");
-        for (int i = 0; i < this.len; i++) {
-            sb.append(this.x[i]);
-            if(i!= (this.len-1)) sb.append(delimiter);
+        for(long key: this.x.keySet()){
+            sb.append(String.format("(%d,%f)", key, this.x.get(key)));
         }
-//        sb.append(")");
         return sb.toString();
     }
 
     public Vector square() {
-        Vector temp = new Vector(this.len);
-        for(int i = 0 ; i < this.len; i++){
-            temp.x[i] = this.x[i] * this.x[i];
+        Vector res = new Vector(this.capacity);
+        double temp;
+        for(long key: this.x.keySet()){
+            temp = this.x.get(key);
+            res.put(key, temp * temp);
         }
-        return temp;
+        return res;
     }
 
     public double squaredVal() {
-        double res = 0; 
-        for(int i = 0 ; i < this.len; i++){
-            res += this.x[i] * this.x[i];
-        }
-        return res;
-    }
-
-    public Vector sub(Vector c) {
-        Vector res = new Vector(this.x);
-        res.subFromThis(c);
-        return res;
-    }
-
-    private void subFromThis(Vector y) {
-        if(this.len!= y.len) {
-            System.err.println("vector lengths do not match");
-            return;
-        }
-
-        for(int i = 0 ; i < this.len; i++){
-            this.x[i] -= y.x[i];
-        }
-    }
-
-    public boolean isEqual(Vector y) {
-        if(y == null) return false; 
-        if(this.len!= y.len) return false;
-
-        for(int i = 0 ; i < this.len; i++){
-            if(this.x[i] != y.x[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // cross product
-    public double mul(Vector y) {
-        double res = 0 ;
-        if(y == null) return res;
-        for(int i = 0 ; i < this.len; i++){
-            res += this.x[i] * y.x[i];
+        double res = 0;
+        double temp;
+        for(long key: this.x.keySet()){
+            temp = this.x.get(key);
+            res+= (temp*temp);
         }
         return res;
     }
 
     public double absVal() {
-        double res = 0 ;
-        for(int i = 0 ; i < this.len; i++){
-            res += ((this.x[i] >0 )?this.x[i]:-this.x[i]);
+        double res = 0;
+        double temp;
+        for(long key: this.x.keySet()){
+            temp = this.x.get(key);
+            res+= Math.abs(temp);
         }
         return res;
     }
 
-    public void setValues(Vector ss) {
-        for(int i = 0 ; i < this.len; i++){
-            this.x[i] = ss.x[i];
+    public Vector sub(Vector c) {
+        Vector res = new Vector(this.capacity);
+        double temp;
+        for(long key: this.x.keySet()){
+            res.put(key, this.x.get(key));
+        }
+        for(long key: c.x.keySet()){
+            res.put(key, res.x.getOrDefault(key, 0.0)-c.x.get(key));
+        }
+        return res;
+    }
+
+    public void subFromThis(Vector y) {
+        for(long key: y.x.keySet()){
+            this.put(key, this.x.getOrDefault(key, 0.0)-y.x.get(key));
         }
     }
 
-    public void put(long col, double val) {
-        this.x[(int)col-1] = val;
+    public boolean isEqual(Vector y) {
+        if(y == null) return false;
+        if(this.x.size() != y.x.size()) return false;
+        for(long key: this.x.keySet()){
+            if(!y.x.containsKey(key)) return false;
+            else{
+                if(!y.x.get(key).equals(this.x.get(key))) return false;
+            }
+        }
+        return true;
     }
+
+    public boolean isEqualFields(Vector y) {
+        if(y == null) return false;
+        if(this.x.size() != y.x.size()) return false;
+        for(long key: this.x.keySet()){
+            if(!y.x.containsKey(key)) return false;
+        }
+        return true;
+    }
+    
+    public double mul(Vector y) {
+        double res = 0;
+        for(long key: y.x.keySet()){
+            res += this.x.getOrDefault(key, 0.0)*y.x.get(key);
+        }
+        return res;
+    }
+    public void setValues(Vector ss) {
+        this.x.clear();
+        for(long key: ss.x.keySet()){
+            this.x.put(key,ss.x.get(key));
+        }
+    }
+
+//    
+//    public double absVal() {
+//        double res =0;
+//        for (long key: this.x.keySet()){
+//            res += 
+//        }
+//    }
+
+//    public void setValues(SVector ss) {
+//        
+//
+//    }
 }

@@ -68,14 +68,13 @@ public class InternalNode extends Node<CFNode>{
     public void add(int index, CFNode point){
         if(point != null){
             points.add(index, point);
-            
             if(this.n == null) this.n = new IntegerObj(point.n.value);
             else this.n.addToThis(point.n.value);
             if(this.LS != null) this.LS.addToThis(point.LS);
-            else this.LS = new Vector(point.LS.x);
+            else this.LS = new Vector(point.LS);
 
             if(this.SS != null) this.SS.addToThis(point.SS);
-            else this.SS = new Vector(point.SS.x);
+            else this.SS = new Vector(point.SS);
         }
     }
 
@@ -93,8 +92,8 @@ public class InternalNode extends Node<CFNode>{
         if(this.points.size() < getCapacity() ){
             
             IntegerObj n = (this.getN()!=null)?new IntegerObj(this.getN().value):null;
-            Vector ls = (this.getLS()!=null)?new Vector(this.getLS().x):null;
-            Vector ss = (this.getSS()!=null)?new Vector(this.getSS().x):null;
+            Vector ls = (this.getLS()!=null)?new Vector(this.getLS()):null;
+            Vector ss = (this.getSS()!=null)?new Vector(this.getSS()):null;
             add(dataPoint);
             if(ls!= null && ss!=null) this.setDelta(new CFEntry(this.getN().sub(n), this.getLS().sub(ls), this.getSS().sub(ss)));
             logger.debug("Delta set after insert of "+dataPoint +" to : "+this.delta);
@@ -109,7 +108,7 @@ public class InternalNode extends Node<CFNode>{
 
     public CFNode split(CFNode dataPoint){
         logger.debug("Incoming x point to split INternal node: "+dataPoint);
-        CFEntry e =  new CFEntry(new IntegerObj(this.getN().value), new Vector(this.getLS().x), new Vector(this.getSS().x));
+        CFEntry e =  new CFEntry(new IntegerObj(this.getN().value), new Vector(this.getLS()), new Vector(this.getSS()));
         logger.debug("cfnode "+dataPoint+"is adding to "+e +"-- in internal node"+this);
         // chose 2 leaves which are farthest from each other
         double maxSofar = -1, dist;
