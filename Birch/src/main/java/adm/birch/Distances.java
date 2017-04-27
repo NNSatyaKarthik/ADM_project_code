@@ -29,7 +29,7 @@ public class Distances {
 
     public static Vector getCentroid(int n, Vector ls) {
         // centroid = sum(vectors)/len(vectors)
-        return ls.div(n);
+        return ls.div(n);  
     }
 
     public static double getRadius(DataPoints points){

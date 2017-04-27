@@ -112,16 +112,16 @@ public class LeafNode extends Node<Vector>{
     // NOTE: no need of delta pointers for leaf node .. dont complicate the code
     public boolean insert(Vector dataPoint) {
         if(this.points.size() < getCapacity()){
-            if(this.points.size() == 0){
+//            if(this.points.size() == 0){
                 add(dataPoint);
                 return true;
-            }
-            Vector centroid = Distances.getCentroid(this.getN().value, this.getLS());
-            if(Distances.getD0(centroid, dataPoint) < this.threshold){
-                add(dataPoint); // add the point to the x set and return
-                return true;
-            }
-            return false;
+//            }
+//            Vector centroid = Distances.getCentroid(this.getN().value, this.getLS());
+//            if(Distances.getD0(centroid, dataPoint) < this.threshold){
+//                add(dataPoint); // add the point to the x set and return
+//                return true;
+//            }
+//            return false;
         }
         return false;
     }

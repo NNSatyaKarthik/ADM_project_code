@@ -8,18 +8,28 @@ import java.util.HashMap;
 public class Vector{
     HashMap<Long, Double> x;
     int capacity;
-
+    
+    private double sigmaVal;
     public Vector(int capacity) {
         this.x = new HashMap<>();
         this.capacity = capacity;
     }
 
+    public double getSigmaVal() {
+        return sigmaVal;
+    }
+
+    public void setSigmaVal(double sigmaVal) {
+        this.sigmaVal = sigmaVal;
+    }
+    
     public Vector(Vector point){
         this.x = new HashMap<>();
         this.capacity = point.getCapacity();
         for(Long key: point.x.keySet()){
            // System.out.println(point.x.get(key));
             this.x.put(key,point.x.get(key));
+            this.sigmaVal+= point.x.get(key);
         }
     }
 
@@ -28,6 +38,10 @@ public class Vector{
     }
 
     public void put(long col, double val) {
+        if(this.x.containsKey(col)){
+            this.sigmaVal -= this.x.get(col);
+        }
+        this.sigmaVal+= val;
         this.x.put(col, val);
     }
 
@@ -45,6 +59,7 @@ public class Vector{
 
     public void addToThis(Vector y) {
         for(long key: y.x.keySet()){
+            this.sigmaVal += this.x.getOrDefault(key, 0.0) + y.x.get(key);    
             this.x.put(key, this.x.getOrDefault(key, 0.0)+y.x.get(key));
         }
     }
@@ -59,18 +74,19 @@ public class Vector{
     public Vector div(double param) {
         if(param ==0 ) return null;
         Vector res = new Vector(this.capacity);
-        for(long key: this.x.keySet()){
-            res.put(key, this.x.get(key)/param);
-        }
+        this.x.forEach((key, val)->res.put(key, this.x.get(key)/param));
+//        for(long key: this.x.keySet()){
+//            res.put(key, this.x.get(key)/param);
+//        }
         return res;
     }
 
     public double val() {
-        double res = 0;
-        for(long key: this.x.keySet()){
-            res+= this.x.get(key);
-        }
-        return res;
+//        double res = 0;
+//        for(long key: this.x.keySet()){
+//            res+= this.x.get(key);
+//        }
+        return this.sigmaVal;
     }
 
     @Override
@@ -93,13 +109,14 @@ public class Vector{
     }
 
     public double squaredVal() {
-        double res = 0;
-        double temp;
-        for(long key: this.x.keySet()){
-            temp = this.x.get(key);
-            res+= (temp*temp);
-        }
-        return res;
+        return this.square().getSigmaVal();
+//        double res = 0;
+//        double temp;
+//        for(long key: this.x.keySet()){
+//            temp = this.x.get(key);
+//            res+= (temp*temp);
+//        }
+//        return res;
     }
 
     public double absVal() {
@@ -158,10 +175,11 @@ public class Vector{
         }
         return res;
     }
+    
     public void setValues(Vector ss) {
         this.x.clear();
         for(long key: ss.x.keySet()){
-            this.x.put(key,ss.x.get(key));
+            this.put(key,ss.x.get(key));
         }
     }
 
