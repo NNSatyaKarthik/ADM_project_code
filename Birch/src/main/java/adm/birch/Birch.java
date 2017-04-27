@@ -12,9 +12,9 @@ public class Birch{
     final static Logger logger = Logger.getLogger(Birch.class); 
     private int M; 
     private int L;
-    private int T;
+    private double T;
     private Node root = null;
-    public Birch(int threshold, int branchingFactor, int noOfLeaves) {
+    public Birch(double threshold, int branchingFactor, int noOfLeaves) {
         this.M  = branchingFactor;
         this.L = noOfLeaves;
         this.T = threshold;
@@ -34,7 +34,7 @@ public class Birch{
         boolean internalNodeState = false;
         if(this.root == null){// create new Node.. and then insert
             itemp = new InternalNode(M, null, false); // creates a internal node
-            ltemp = new LeafNode(L, itemp, true); // creates a new leaf node
+            ltemp = new LeafNode(L, itemp, true, this.T); // creates a new leaf node
             isInserted = ltemp.insert(data); // inserts x into the leaf node
             if(isInserted){
                 CFNode n = new CFNode(ltemp);

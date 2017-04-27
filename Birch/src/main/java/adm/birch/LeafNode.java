@@ -14,10 +14,11 @@ public class LeafNode extends Node<Vector>{
     private Vector LS;
     private Vector SS;
     private IntegerObj n;
-    
-    public LeafNode(int capacity, Node parentPtr, boolean isLeaf) {
+    private double threshold;
+    public LeafNode(int capacity, Node parentPtr, boolean isLeaf, double threshold) {
         super(capacity, parentPtr, isLeaf);
         this.points = new ArrayList<Vector>(capacity+1);
+        this.threshold = threshold;
     }
     
     public LeafNode(int capacity, Node parentPtr, boolean isLeaf, ArrayList<Vector> points) {
@@ -111,8 +112,16 @@ public class LeafNode extends Node<Vector>{
     // NOTE: no need of delta pointers for leaf node .. dont complicate the code
     public boolean insert(Vector dataPoint) {
         if(this.points.size() < getCapacity()){
-            add(dataPoint); // add the point to the x set and return
-            return true;
+            if(this.points.size() == 0){
+                add(dataPoint);
+                return true;
+            }
+            Vector centroid = Distances.getCentroid(this.getN().value, this.getLS());
+            if(Distances.getD0(centroid, dataPoint) < this.threshold){
+                add(dataPoint); // add the point to the x set and return
+                return true;
+            }
+            return false;
         }
         return false;
     }
@@ -143,8 +152,8 @@ public class LeafNode extends Node<Vector>{
         Vector dest = this.points.get(maxSofarJ);
         
          // iterate again and see which one is nearer.
-        LeafNode x = new LeafNode(getCapacity(), null, true);
-        LeafNode y = new LeafNode(getCapacity(), null, true);
+        LeafNode x = new LeafNode(getCapacity(), null, true, this.threshold);
+        LeafNode y = new LeafNode(getCapacity(), null, true, this.threshold);
         x.add(src); // added src to x cluster
         y.add(dest); // added dest to y cluster
         double dx = 0 , dy = 0 ;

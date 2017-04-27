@@ -1,13 +1,11 @@
 package adm.birch;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.*;
 import org.junit.Test;
 //import utilities.FileReaders;
 import utilities.FileReadersMtx;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -68,7 +66,7 @@ public class BirchTest {
             insertAndLabelData(vectors,0, 5, 10, basedir+ "sample_output.csv", 4);
     }
 
-    public void insertAndLabelData(List<Vector> vectors, int threshold, int branchinfactor, int noOfLeaves, String outputFile, int numOfClusters) throws IOException {
+    public void insertAndLabelData(List<Vector> vectors, double threshold, int branchinfactor, int noOfLeaves, String outputFile, int numOfClusters) throws IOException {
         System.out.println(vectors.size());
         Birch birch = new Birch(threshold, branchinfactor, noOfLeaves);
         int c = 0;
@@ -96,10 +94,11 @@ public class BirchTest {
 
     @Test
     public void readMtxFile() throws IOException {
-        String basedir = "C://Users/vivek/Documents/ADM_project_code/data/";
+//        String basedir = "C://Users/vivek/Documents/ADM_project_code/data/";
+        String basedir = "/Users/nagasaty/0classes/adm/adm_project/";
         FileReadersMtx frs = new FileReadersMtx(basedir + "sample.Mtx", " ",2);
         List<Vector> vectors = frs.getVectors(-1);
-        insertAndLabelData(vectors,0, 5, 10, basedir+ "sample.csv", 4);
+        insertAndLabelData(vectors,0.5, 5, 10, basedir+ "sample.csv", 4);
         
     }
 }
